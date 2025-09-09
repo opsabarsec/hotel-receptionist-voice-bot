@@ -1,0 +1,16 @@
+[project]
+name = "hotel-voice-agent"
+version = "0.1.0"
+description = "Hotel receptionist voice agent and Supabase integration"
+authors = [
+    { name="Marco Berta", email="info@marco-berta.com" }
+]
+requires-python = ">=3.10"
+
+[project.dependencies]
+openai-agent >= 0.1.0
+pydantic >= "2.11.7"
+supabase >= "2.18.1"
+
+[tool.setuptools]
+packages = ["."]
