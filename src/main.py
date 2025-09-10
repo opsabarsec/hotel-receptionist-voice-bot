@@ -3,7 +3,7 @@ Tech: FastAPI"""
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
-from bot_main import main as bot_main_async  # main() coroutine with conversation logic
+from bot_main import bot as bot_main_async  # main() coroutine with conversation logic
 from reservation_db import load_json, insert_into_supabase
 from supabase import create_client, Client
 
