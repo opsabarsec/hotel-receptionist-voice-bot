@@ -25,12 +25,12 @@ def save_request_to_json(request: HotelRequest, filename: str = "hotel_requests.
             data = json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         data = []
-    data.append(request.dict())
+    data.append(request.model_dump())
     with open(filename, "w") as f:
         json.dump(data, f, indent=2)
 
 
-async def main():
+async def bot():
     agent = RealtimeAgent(
         name="Hotel Receptionist",
         instructions=(
@@ -86,4 +86,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(bot())
