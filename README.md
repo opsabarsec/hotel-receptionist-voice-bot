@@ -14,6 +14,10 @@ This project implements an intelligent voice assistant designed specifically for
 - **24/7 Availability**: Provides round-the-clock customer service
 - **Integration Ready**: Designed to integrate with existing hotel management systems
 
+## System Architecture
+
+![System Architecture Diagram](images/diagram_receptionist_bot.png)
+
 ## Key Performance Indicators (KPIs)
 
 ### Operational Metrics
