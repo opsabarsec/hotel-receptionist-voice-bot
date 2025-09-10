@@ -1,12 +1,12 @@
 import asyncio
 from agents.realtime import RealtimeAgent, RealtimeRunner
+from agents_mcp import Agent  # <--- Required for MCP support!
 from pydantic import BaseModel, Field
 from datetime import datetime
 import json
 
+
 # Define the Pydantic model for hotel requests
-
-
 class HotelRequest(BaseModel):
     Available: bool = Field(
         ..., description="True if room is available, False otherwise"
@@ -31,15 +31,21 @@ def save_request_to_json(request: HotelRequest, filename: str = "hotel_requests.
 
 
 async def bot():
+    # ---- INTEGRATE MCP (Supabase, WhatsApp) ----
     agent = RealtimeAgent(
         name="Hotel Receptionist",
         instructions=(
             "You are a friendly hotel receptionist. "
             "Your job is to collect from the guest: name, check-in and check-out dates, "
             "preferred room type, number of guests, and any special requests. "
-            "Confirm the reservation details succinctly."
+            "Confirm the reservation details succinctly.\n"
+            "You also have access to Supabase and WhatsApp tools via MCP for handling data and sending confirmations."
         ),
+        # <<<< ADD THIS: list MCP servers here! >>>>
+        mcp_servers=["supabase", "whatsapp"],
     )
+    # --------------------------------------------
+
     runner = RealtimeRunner(
         starting_agent=agent,
         config={
@@ -76,13 +82,20 @@ async def bot():
                     "num_guests": 2,
                     "special_requests": "Late check-in",
                 }
+
             elif event.type == "response.audio_transcript.done":
                 print(f"Receptionist: {event.transcript}")
-                # When agent confirms all booking info, fill the form - here, after collecting all fields
-                if reservation:
-                    record = HotelRequest(**reservation)
-                    save_request_to_json(record)
-                    print("Reservation saved in JSON.")
+
+            # When agent confirms all booking info, fill the form
+            if reservation:
+                record = HotelRequest(**reservation)
+                save_request_to_json(record)
+                print("Reservation saved in JSON.")
+
+                # -------- Demonstrate Tool use (Template) -------------
+                # To use the MCP tools, you can send a system-message or instruction format like:
+                # await session.send_message("Save this reservation to Supabase and notify guest on WhatsApp.")
+                # Or use session.tool_call(...) per your SDK if supported
 
 
 if __name__ == "__main__":
