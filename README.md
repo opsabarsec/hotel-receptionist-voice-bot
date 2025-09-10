@@ -1,7 +1,7 @@
 # Hotel Receptionist Voice Bot
 
 AI-powered hotel receptionist voice bot using OpenAI Realtime API for multilingual customer service.
-
+![AI hotel receptionist](images/thumbnail.png)
 ## Project Summary
 
 This project implements an intelligent voice assistant designed specifically for hotel reception services. The bot leverages OpenAI's Realtime API to provide seamless, multilingual customer interactions, handling common hotel inquiries, bookings, and guest services with natural voice conversations.
