@@ -1,37 +1,13 @@
 from agents.realtime import RealtimeAgent, RealtimeRunner
 
-from pydantic import BaseModel, Field
 from datetime import datetime
-import json
+
 import asyncio
-import os
-
-
-# Define the Pydantic model for hotel requests
-class HotelRequest(BaseModel):
-    Available: bool = Field(
-        ..., description="True if room is available, False otherwise"
-    )
-    CheckInDate: str = Field(..., description="Check-in date (YYYY-MM-DD)")
-    CheckoutDate: str = Field(..., description="Check-out date (YYYY-MM-DD)")
-    NumberOfGuests: int = Field(..., description="Number of guests for the reservation")
-    guest_name: str = Field(..., description="Name of the guest")
-    room_type: str = Field(..., description="Requested room type")
-    special_requests: str = Field("", description="Any special requests")
-
-
-def save_request_to_json(request: HotelRequest, filename: str = "hotel_requests.json"):
-    try:
-        with open(filename, "r") as f:
-            data = json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        data = []
-    data.append(request.model_dump())
-    with open(filename, "w") as f:
-        json.dump(data, f, indent=2)
 
 
 class TranscriptLogger:
+    """Logs the conversation transcript to a text file"""
+
     def __init__(self, filename: str = None):
         if filename is None:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -55,14 +31,24 @@ class TranscriptLogger:
             f.write(f"[{timestamp.strftime('%H:%M:%S')}] {speaker}: {message}\n")
 
     def save_full_transcript(self):
-        """Save the complete transcript as JSON"""
-        json_filename = self.filename.replace(".txt", ".json")
-        with open(json_filename, "w", encoding="utf-8") as f:
-            json.dump(self.transcript, f, indent=2, ensure_ascii=False)
-        return json_filename
+        """Save the complete transcript as text"""
+        with open(self.filename, "w", encoding="utf-8") as f:
+            for entry in self.transcript:
+                f.write(
+                    f"[{entry['timestamp']}] {entry['speaker']}: {entry['message']}\n"
+                )
+
+        return self.filename
 
 
-async def bot():
+async def bot() -> str:
+    """Voice-activated hotel receptionist bot using RealtimeAgent and RealtimeRunner.
+    The conversation is returned as text and logged into a file.
+
+    Returns:
+        str: The full conversation transcript as a string.
+    """
+
     # Initialize transcript logger
     logger = TranscriptLogger()
     print(f"Transcript will be saved to: {logger.filename}")
@@ -108,8 +94,6 @@ async def bot():
             print("Hotel receptionist agent ready for voice input.")
             logger.add_entry("SYSTEM", "Hotel receptionist agent started")
 
-            reservation = {}
-
             async for event in session:
                 # Log different types of events
                 if (
@@ -125,30 +109,6 @@ async def bot():
                     print(f"Receptionist: {agent_message}")
                     logger.add_entry("RECEPTIONIST", agent_message)
 
-                elif event.type == "response.audio_transcript.delta":
-                    # Optional: log partial responses as they come in
-                    # print(f"Receptionist (partial): {event.delta}")
-                    pass
-
-                elif event.type == "conversation.item.input_audio_transcription.failed":
-                    error_msg = f"Transcription failed: {getattr(event, 'error', 'Unknown error')}"
-                    print(error_msg)
-                    logger.add_entry("SYSTEM", error_msg)
-
-                elif event.type == "error":
-                    error_msg = (
-                        f"Session error: {getattr(event, 'error', 'Unknown error')}"
-                    )
-                    print(error_msg)
-                    logger.add_entry("SYSTEM", error_msg)
-
-                # You can add more event types as needed
-                # Common event types include:
-                # - session.created, session.updated
-                # - conversation.item.created
-                # - response.created, response.done
-                # - rate_limits.updated
-
     except KeyboardInterrupt:
         print("\nSession interrupted by user")
         logger.add_entry("SYSTEM", "Session interrupted by user")
@@ -158,19 +118,15 @@ async def bot():
     finally:
         # Save final transcript
         logger.add_entry("SYSTEM", "Session ended")
-        json_file = logger.save_full_transcript()
-        print(f"Full transcript saved to: {logger.filename}")
-        print(f"JSON transcript saved to: {json_file}")
+        text_file = logger.save_full_transcript()
+        print(f"Full transcript saved to: {text_file}")
 
-
-async def get_existing_transcript(filename: str):
-    """Helper function to read and display an existing transcript"""
-    try:
-        with open(filename, "r", encoding="utf-8") as f:
-            content = f.read()
-        return content
-    except FileNotFoundError:
-        return f"Transcript file {filename} not found"
+    # Return the transcript as a string variable
+    transcript_str = "\n".join(
+        f"[{entry['timestamp']}] {entry['speaker']}: {entry['message']}"
+        for entry in logger.transcript
+    )
+    return transcript_str
 
 
 # Example usage to retrieve transcript

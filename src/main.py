@@ -3,6 +3,7 @@ Tech: FastAPI"""
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
+from reader import extract_hotel_info
 from bot_main import bot as bot_main_async  # main() coroutine with conversation logic
 from reservation_db import load_json, insert_into_supabase
 from supabase import create_client, Client
@@ -20,26 +21,22 @@ async def bot_async_conversation():
     Returns the most recently saved reservation (from JSON file).
     """
     # Run the async bot conversation
-    await bot_main_async()
-    # After the session, last JSON entry holds the reservation
-    reservations = load_json("hotel_requests.json")
-    if reservations:
-        return reservations[-1]
-    return JSONResponse(content={"status": "no reservation saved"}, status_code=204)
+    conversation_text = await bot_main_async()
+    print("Conversation ended.")
+    # use extract_hotel_info from the text
+    reservation = extract_hotel_info(conversation_text)
 
+    # Convert reservation object to JSON
+    reservation_json = reservation.model_dump()
 
-@app.post("/database")
-def upload_to_supabase():
-    """
-    Inserts all reservations from hotel_requests.json to Supabase.
-    """
-    reservations = load_json("hotel_requests.json")
+    # Upload to Supabase
     try:
         supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-        insert_into_supabase(supabase, reservations)
-        return {"status": "success", "inserted_records": len(reservations)}
+        insert_into_supabase(supabase, [reservation_json])
+        print("Reservation uploaded to Supabase.")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Supabase upload failed: {e}")
 
-
-# example use for the API
+    return JSONResponse(
+        content={"reservation": reservation.model_dump(), "status_code": 200}
+    )
