@@ -8,13 +8,13 @@ authors = [
 
 requires-python = ">=3.11"
 
-dependencies = ["openai-agent >= 0.1.0",
-"pydantic >= 2.11.7",
-"supabase >= 2.18.1",
+dependencies = ["openai-agent",
+"pydantic",
+"supabase",
 "fastapi >= 0.110.0",
 "uvicorn >= 0.29.0",
 "httpx >= 0.27.0",
-"openai-agents-mcp >= 0.0.8"]
+"openai-agents-mcp"]
 
 [project.optional-dependencies]
 test = [
