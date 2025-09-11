@@ -1,11 +1,11 @@
-"""This scripts contains the main API functions to call the bot and reservation_db modules.
+"""This scripts contains the main API functions to call the bot, reader and reservation_db modules.
 Tech: FastAPI"""
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from reader import extract_hotel_info
 from bot_main import bot as bot_main_async  # main() coroutine with conversation logic
-from reservation_db import load_json, insert_into_supabase
+from reservation_db import insert_into_supabase
 from supabase import create_client, Client
 
 app = FastAPI()
