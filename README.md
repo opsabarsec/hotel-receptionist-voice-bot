@@ -44,19 +44,8 @@ Quality Assurance: Automated call logging and sentiment tracking enable continuo
 
 Scalability: The solution easily supports hotels of any size, handling high call volumes and fluctuating demand without additional hiring.
 
-## Summary of Core Process:
 
-Guest calls or interacts via smart device in their native language.
-
-Bot transcribes audio with ASR, uses OpenAI Realtime GPT to generate friendly, accurate responses.
-
-Guest requests (bookings, info, services) are fulfilled instantly, or escalated to human if needed.
-
-Every conversation is logged into a database-friendly format.
-
-System refines itself through ongoing prompt updates and feedback, maximizing ROI over time.
-
-## Typical KPI Outcomes:
+## Typical KPI estimated outcomes:
 
 49% reduction in staffing costs (e.g., from $215,000 to $110,000 annually for a boutique hotel)
 
@@ -78,7 +67,7 @@ Multilingual support: 6+ languages handled natively in real-time
 
 ### Prerequisites
 
-- Python 3.8+
+- Python 3.11+
 - OpenAI API key
 - Audio input/output capabilities
 
@@ -102,9 +91,6 @@ export OPENAI_API_KEY='your-api-key-here'
 python bot_main.py
 ```
 
-## Documentation
-
-See [index.md](index.md) for detailed documentation and implementation guide.
 
 ## License
 
