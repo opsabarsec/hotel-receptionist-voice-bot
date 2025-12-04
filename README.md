@@ -10,6 +10,7 @@ This project implements an intelligent voice assistant designed specifically for
 
 - **Multilingual Support**: Handles customer inquiries in multiple languages
 - **Real-time Voice Processing**: Uses OpenAI Realtime API for natural conversations
+- **Automatic Translation**: Transcripts are automatically translated to English for staff review while preserving original text
 - **Hotel-specific Knowledge**: Trained on common hotel services and procedures
 - **24/7 Availability**: Provides round-the-clock customer service
 - **Integration Ready**: Designed to integrate with existing hotel management systems
@@ -89,6 +90,19 @@ export OPENAI_API_KEY='your-api-key-here'
 2. Run the bot:
 ```bash
 python bot_main.py
+```
+
+### Transcript Output
+
+After each conversation, the bot automatically generates three transcript files:
+
+- **Original transcript** (`hotel_conversation_TIMESTAMP.txt`): Conversation in the original language(s)
+- **Bilingual transcript** (`hotel_conversation_TIMESTAMP_bilingual.txt`): Side-by-side original and English translation
+- **JSON transcript** (`hotel_conversation_TIMESTAMP.json`): Structured data with all metadata including detected languages
+
+To disable automatic translation, modify `bot_main.py`:
+```python
+logger = TranscriptLogger(enable_translation=False)
 ```
 
 
