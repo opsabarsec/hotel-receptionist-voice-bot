@@ -21,15 +21,7 @@ async def test_translation():
     Creates a simulated multilingual conversation and tests the translation
     functionality, generating sample transcript files for review.
     """
-    print("=" * 80)
-    print("Testing Multi-Language Transcript Translation Feature")
-    print("=" * 80)
-    print()
-
-    # Create logger with translation enabled
     logger = TranscriptLogger(filename="test_conversation.txt", enable_translation=True)
-    print(f"✓ TranscriptLogger initialized with translation enabled")
-    print()
 
     # Simulate a multilingual conversation
     test_conversations = [
@@ -58,51 +50,21 @@ async def test_translation():
         ("SYSTEM", "Session ended", "English"),
     ]
 
-    print("Simulating conversation with multiple languages:")
-    print("-" * 80)
-
     for speaker, message, expected_lang in test_conversations:
         logger.add_entry(speaker, message)
-        print(f"[{speaker}]: {message}")
         if speaker in ["USER", "RECEPTIONIST"]:
             print(f"  (Expected language: {expected_lang})")
 
-    print()
-    print("-" * 80)
-    print()
-
-    # Save transcripts
-    print("Saving transcripts...")
     original_file, bilingual_file = logger.save_full_transcript()
     json_file = logger.save_json_transcript()
 
-    print(f"✓ Original transcript: {original_file}")
-    print(f"✓ Bilingual transcript: {bilingual_file}")
-    print(f"✓ JSON transcript: {json_file}")
-    print()
-
-    # Display sample from bilingual transcript
     if bilingual_file and os.path.exists(bilingual_file):
-        print("=" * 80)
-        print("Sample from Bilingual Transcript:")
-        print("=" * 80)
         with open(bilingual_file, "r", encoding="utf-8") as f:
             content = f.read()
             # Show first 1500 characters
             print(content[:1500])
             if len(content) > 1500:
                 print("\n... (truncated)")
-        print()
-
-    print("=" * 80)
-    print("✓ Translation feature test completed successfully!")
-    print("=" * 80)
-    print()
-    print("Next steps:")
-    print("1. Review the generated transcript files")
-    print("2. Verify translations are accurate")
-    print("3. Test with the actual voice bot by running: python src/bot_main.py")
-    print()
 
 
 if __name__ == "__main__":
