@@ -17,7 +17,19 @@ This project implements an intelligent voice assistant designed specifically for
 
 ## System Architecture
 
-![System Architecture Diagram](images/diagram_receptionist_bot.png)
+```mermaid
+flowchart TD
+    A[Customer calls] -->|MCP WhatsApp connection| B[OpenAI Realtime GPT<br/>Greet customer and ask:<br/>Date, time, guests<br/>Carry conversation]
+
+    B --> C[Transcript text]
+
+    C --> D{Can reservation data<br/>be extracted?}
+
+    D -->|Yes| E[Fill Pydantic schema<br/>and create JSON object]
+    E -->|MCP DB connection| F[(DB record)]
+
+    D -->|No| G[Message human receptionist<br/>with number and call transcript<br/>to eventually call back]
+```
 
 Key Capabilities:
 
