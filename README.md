@@ -23,6 +23,7 @@ flowchart TD
     A(("Customer<br/>calls"))
     B["Greet and ask: Date,<br/>time, number of<br/>guests. Carry on<br/>conversation<br/>(OpenAI Realtime GPT)"]
     C("Transcript text")
+    T["Optional:<br/>Translate to<br/>English"]
     D{"can data for<br/>reservation be<br/>extracted?"}
     E("Fill Pydantic schema<br/>and create a Json<br/>object<br/>(Pydantic AI)")
     F[("DB record")]
@@ -32,6 +33,7 @@ flowchart TD
     A ==>|MCP WhatsApp connection| B
     B --> C
     C --> D
+    C -.-> T
     D -->|Yes| E
     D -->|NO| G
     E --> F
@@ -40,15 +42,23 @@ flowchart TD
     %% Colors
     classDef blueFill fill:#1E88E5,stroke:#fff,stroke-width:2px,color:#fff
     classDef blackFill fill:#1a1a1a,stroke:#fff,stroke-width:2px,color:#fff
+    classDef grayFill fill:#757575,stroke:#fff,stroke-width:2px,color:#fff
     
     class B,G blueFill
     class A,C,D,E,F blackFill
+    class T grayFill
 
-    %% Edge Colors: 0=A->B, 3=D->E(Yes), 4=D->G(NO), 6=F->B
+    %% Edge Colors
+    %% 0: A->B
+    %% 3: C->T
+    %% 4: D->E (Yes)
+    %% 5: D->G (NO)
+    %% 7: F->B
     linkStyle 0 stroke:#FFD700,stroke-width:2px;
-    linkStyle 3 stroke:#00E676,stroke-width:2px;
-    linkStyle 4 stroke:#FF5252,stroke-width:2px;
-    linkStyle 6 stroke:#FFD700,stroke-width:2px;
+    linkStyle 3 stroke:#BDBDBD,stroke-width:2px,stroke-dasharray: 5 5;
+    linkStyle 4 stroke:#00E676,stroke-width:2px;
+    linkStyle 5 stroke:#FF5252,stroke-width:2px;
+    linkStyle 7 stroke:#FFD700,stroke-width:2px;
 ```
 
 Key Capabilities:
