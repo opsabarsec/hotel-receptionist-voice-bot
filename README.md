@@ -19,16 +19,36 @@ This project implements an intelligent voice assistant designed specifically for
 
 ```mermaid
 flowchart TD
-    A[Customer calls] -->|MCP WhatsApp connection| B[OpenAI Realtime GPT<br/>Greet customer and ask:<br/>Date, time, guests<br/>Carry conversation]
+    %% Nodes
+    A(("Customer<br/>calls"))
+    B["Greet and ask: Date,<br/>time, number of<br/>guests. Carry on<br/>conversation<br/>(OpenAI Realtime GPT)"]
+    C("Transcript text")
+    D{"can data for<br/>reservation be<br/>extracted?"}
+    E("Fill Pydantic schema<br/>and create a Json<br/>object<br/>(Pydantic AI)")
+    F[("DB record")]
+    G["Message to human<br/>receptionist with number and<br/>call transcript to eventually<br/>call back"]
 
-    B --> C[Transcript text]
+    %% Edges
+    A ==>|MCP WhatsApp connection| B
+    B --> C
+    C --> D
+    D -->|Yes| E
+    D -->|NO| G
+    E --> F
+    F ==>|MCP DB connection| B
 
-    C --> D{Can reservation data<br/>be extracted?}
+    %% Colors
+    classDef blueFill fill:#1E88E5,stroke:#fff,stroke-width:2px,color:#fff
+    classDef blackFill fill:#1a1a1a,stroke:#fff,stroke-width:2px,color:#fff
+    
+    class B,G blueFill
+    class A,C,D,E,F blackFill
 
-    D -->|Yes| E[Fill Pydantic schema<br/>and create JSON object]
-    E -->|MCP DB connection| F[(DB record)]
-
-    D -->|No| G[Message human receptionist<br/>with number and call transcript<br/>to eventually call back]
+    %% Edge Colors: 0=A->B, 3=D->E(Yes), 4=D->G(NO), 6=F->B
+    linkStyle 0 stroke:#FFD700,stroke-width:2px;
+    linkStyle 3 stroke:#00E676,stroke-width:2px;
+    linkStyle 4 stroke:#FF5252,stroke-width:2px;
+    linkStyle 6 stroke:#FFD700,stroke-width:2px;
 ```
 
 Key Capabilities:
